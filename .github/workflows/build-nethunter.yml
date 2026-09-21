@@ -36,6 +36,15 @@ jobs:
           echo "Defconfig:"
           ls -l kernel/source/arch/arm64/configs/oxygen_defconfig
 
+      - name: Create compatibility config
+        shell: bash
+        run: |
+          cat > kernel/source/nethunter.config <<'EOF'
+          CONFIG_CC_STACKPROTECTOR_STRONG=n
+          CONFIG_CC_STACKPROTECTOR_REGULAR=y
+          EOF
+
+
       - name: Build NetHunter kernel
         uses: dabao1955/kernel_build_action@main
         with:
