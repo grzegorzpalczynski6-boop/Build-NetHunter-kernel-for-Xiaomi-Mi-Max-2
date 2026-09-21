@@ -1,0 +1,52 @@
+name: Build NetHunter Kernel for Xiaomi Mi Max 2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-kernel:
+    name: Build kernel for oxygen
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout kernel source
+        uses: actions/checkout@v5
+        with:
+          repository: PixelExperience-Devices/kernel_xiaomi_oxygen
+          ref: thirteen
+          path: kernel/source
+          fetch-depth: 1
+
+      - name: Verify kernel source
+        shell: bash
+        run: |
+          set -e
+
+          test -f kernel/source/Makefile
+          test -d kernel/source/arch
+          test -f kernel/source/arch/arm64/configs/oxygen_defconfig
+
+          echo "Kernel version:"
+          grep -E '^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION)' \
+            kernel/source/Makefile
+
+          echo "Defconfig:"
+          ls -l kernel/source/arch/arm64/configs/oxygen_defconfig
+
+      - name: Build NetHunter kernel
+        uses: dabao1955/kernel_build_action@main
+        with:
+          kernel-url: ./kernel/source/
+          config: oxygen_defconfig
+          arch: arm64
+
+          aosp-gcc: true
+          aosp-clang: true
+          aosp-clang-version: r383902
+
+          nethunter: true
+          nethunter-patch: true
+          anykernel3: true
