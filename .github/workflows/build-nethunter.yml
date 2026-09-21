@@ -28,6 +28,7 @@ jobs:
           test -f kernel/source/Makefile
           test -f kernel/source/arch/arm64/configs/oxygen_defconfig
 
+          echo "Kernel version:"
           grep -E '^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION)' \
             kernel/source/Makefile
 
