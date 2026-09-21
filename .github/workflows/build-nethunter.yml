@@ -26,15 +26,10 @@ jobs:
           set -e
 
           test -f kernel/source/Makefile
-          test -d kernel/source/arch
           test -f kernel/source/arch/arm64/configs/oxygen_defconfig
 
-          echo "Kernel version:"
           grep -E '^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION)' \
             kernel/source/Makefile
-
-          echo "Defconfig:"
-          ls -l kernel/source/arch/arm64/configs/oxygen_defconfig
 
       - name: Create compatibility config
         shell: bash
@@ -44,18 +39,19 @@ jobs:
           CONFIG_CC_STACKPROTECTOR_REGULAR=y
           EOF
 
-
       - name: Build NetHunter kernel
         uses: dabao1955/kernel_build_action@main
         with:
           kernel-url: ./kernel/source/
           config: oxygen_defconfig
           arch: arm64
+          merge-configs: '["nethunter.config"]'
 
           aosp-gcc: true
+          aosp-clang: true
           android-version: 12
+          aosp-clang-version: r383902
 
           nethunter: true
           nethunter-patch: false
           anykernel3: true
-
